@@ -6,8 +6,8 @@ const ul = phrase.getElementsByTagName("UL")[0];
 
 let missed = 0;
 let phrases = [
-  'A diamond in the rough',
-  'A knight in shining armour',
+  'A diamond in the rough'
+/*'A knight in shining armour',
   'A stitch in time saves nine',
   'Accidents will happen',
   'All fingers and thumbs',
@@ -30,7 +30,7 @@ let phrases = [
   'Read between the lines',
   'Shrinking violet',
   'Start from scratch',
-  'The moving finger writes'
+  'The moving finger writes'*/
 ]
 
 //hide overlay when clicked start game
@@ -63,25 +63,35 @@ addPhraseToDisplay(phraseArray);
 
 function checkLetter(button){
   let letters = document.querySelectorAll('.letter');
+  match = null;  //set initial value
   for (i = 0; i < letters.length; i++) {
-    letter = letters[i].textContent;
-    letter = letter.toUpperCase();
-    button = button.toUpperCase();
-
+    letter = letters[i].textContent.toLowerCase();
     if(letter === button){
-      console.log('we have a match');
       letters[i].classList.add("show");
+      match = letter; //update value in loop if matches
     }
-
   }
+  return match; //return updated value. Return within a loop breaks a loop
 }
+
+//check for shorthand way to create funtions
 
 qwerty.addEventListener('click', (e) => {
   if(e.target.tagName === 'BUTTON'){
     button = e.target;
-    buttonValue = button.textContent
     button.classList.add('chosen');
     button.setAttribute('disabled','true');
-    checkLetter(buttonValue);
+    button = button.textContent.toLowerCase();
+    letterFound = checkLetter(button);
+    if(letterFound == null){
+      missed++;
+      if(missed >= 5){
+        youLose();
+      }
+    }
   }
 })
+
+function youLose(){
+  overlay.style.display = "flex";
+}
