@@ -5,6 +5,8 @@ const phrase = document.getElementById('phrase');
 
 const scoreboard = document.getElementById('scoreboard');
 const scoreBoardOl = scoreboard.getElementsByTagName("OL")[0];
+let tries = scoreBoardOl.querySelectorAll('.tries');
+const triesTotal = 5;
 
 const btnReset = overlay.querySelector('.btn__reset');
 const phraseUl = phrase.getElementsByTagName("UL")[0];
@@ -13,8 +15,6 @@ let thePhrase = '';
 
 let missed = 0;
 let phrases = [
-  'Accidents will happen',
-  'All fingers and thumbs',
   'As bald as a coot',
   'As mad as a hatter',
   'Away with the fairies',
@@ -27,12 +27,12 @@ let phrases = [
   'Head over heels',
   'Play silly buggers',
   'Shrinking violet',
-  'Start from scratch',
+  'Start from scratch'
 ]
 
-//hide overlay when clicked start game
+//hide overlay when clicked to start a game
 btnReset.addEventListener('click', (e) => {
-  overlay.style.display = "none";
+    overlay.style.display = "none";
 })
 
 //Get random phrase from array phrases and split characters into array
@@ -61,17 +61,20 @@ function addPhraseToDisplay(arr){
 
 addPhraseToDisplay(phraseArray);
 
+
 function checkLetter(button){
-  let letters = document.querySelectorAll('.letter');
-  match = null;  //set initial value
+
+  let letters = phraseUl.querySelectorAll('.letter');
+
+  match = null;  //set initial value of match
   for (i = 0; i < letters.length; i++) {
     letter = letters[i].textContent.toLowerCase();
     if(letter === button){
       letters[i].classList.add("show");
-      match = letter; //update value in loop if matches
+      match = letter; //update value of match in loop if letter matches
     }
   }
-  return match; //return updated value. Return within a loop breaks a loop
+  return match; //return updated value. Note: a return within a loop breaks a loop which is why this is outside
 }
 
 //check for shorthand way to create funtions
@@ -84,21 +87,19 @@ qwerty.addEventListener('click', (e) => {
     button = button.textContent.toLowerCase();
     letterFound = checkLetter(button);
 
-    //alert(letterFound);
     if(letterFound == null){
-      //add one to the missed variable
-        missed++;
-        //need to remove a try here. Get the last child tries of scoreBoardOl and remove it
-         tries = scoreBoardOl.querySelector('.tries:last-child');
-         tries.parentNode.removeChild(tries);
+
+      //need to remove a try here. Use the value of missed as an index for each heart
+        tries[missed].style.display = 'none';
+
+        //add one to the missed variable
+          missed++;
     }
 
-    checkWin();
+    checkWin(); //run checkWin function
 
   }
 })
-
-
 
 //Create a checkWin function
 
@@ -111,23 +112,53 @@ function checkWin(){
   let letterLetter = phraseUl.querySelectorAll('.letter');
   let letterCount = letterLetter.length;
 
-  //alert(letterCount);
-
   if(showCount === letterCount){
-    overlay.classList.add("win");
-    overlay.style.display = "flex";
-    overlayTitle.innerHTML = `You Win!<br> The phrase was:<br>${thePhrase}`;
+    setTimeout(function(){  //set time out so last letter is shown before overlay
+      overlay.className = "win";
+      overlay.style.display = "flex";
+      overlayTitle.innerHTML = `You Win!<br> The phrase was:<br>${thePhrase}`;
+      resetGame();
+    }, 800);
   }
 
-  if(missed >= 5){
-    overlay.classList.add("lose");
-    overlay.style.display = "flex";
-    overlayTitle.innerHTML = `You Lose!<br> The phrase was:<br>${thePhrase}`;
+  if(missed >= triesTotal){
+    setTimeout(function(){ //set time out so last letter is shown before overlay
+      overlay.className = "lose";
+      overlay.style.display = "flex";
+      overlayTitle.innerHTML = `You Lose!<br> The phrase was:<br>${thePhrase}`;
+      resetGame();
+    }, 800);
   }
-  //If they’re equal, show the overlay screen with the “win” class and appropriate text. Otherwise, if the number of misses is equal to or greater than 5, show the overlay screen with the “lose” class and appropriate text.
+
+//Create a function to house both if statements, be more DRY
+
 }
 
 
 function resetGame(){
+
+  btnReset.textContent = 'Play Again';
+
+  //set missed variable back to 0
+  missed = 0;
+
+  phraseUl.querySelectorAll('li').forEach(el =>
+    el.remove()
+  ); //remove each list item from the nodelist
+
+  phraseArray = getRandomPhraseAsArray(phrases);
+  addPhraseToDisplay(phraseArray);
+
+  //get nodelist of buttons and loop through
+  const button = qwerty.getElementsByTagName('button');
+  for (let i = 0; i < button.length; i++) {
+      button[i].className = '';
+      button[i].disabled = false;
+  }
+
+  //reset tries, put the hearts back
+  for (let i = 0; i < tries.length; i++) {
+    tries[i].style.display = 'inline-block';
+  }
 
 }
