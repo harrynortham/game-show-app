@@ -1,14 +1,18 @@
 const overlay = document.getElementById('overlay');
+const overlayTitle = overlay.querySelector('.title');
 const qwerty = document.getElementById('qwerty');
 const phrase = document.getElementById('phrase');
+
+const scoreboard = document.getElementById('scoreboard');
+const scoreBoardOl = scoreboard.getElementsByTagName("OL")[0];
+
 const btnReset = overlay.querySelector('.btn__reset');
-const ul = phrase.getElementsByTagName("UL")[0];
+const phraseUl = phrase.getElementsByTagName("UL")[0];
+let thePhrase = '';
+
 
 let missed = 0;
 let phrases = [
-  'A diamond in the rough'
-/*'A knight in shining armour',
-  'A stitch in time saves nine',
   'Accidents will happen',
   'All fingers and thumbs',
   'As bald as a coot',
@@ -20,17 +24,10 @@ let phrases = [
   'Cast the first stone',
   'Cool as a cucumber',
   'Eat humble pie',
-  'Fall off the back of a lorry',
-  'Good things come to those that wait',
   'Head over heels',
-  'Innocent until proven guilty',
-  'Know which side your bread is buttered',
-  'Make hay while the sun shines',
   'Play silly buggers',
-  'Read between the lines',
   'Shrinking violet',
   'Start from scratch',
-  'The moving finger writes'*/
 ]
 
 //hide overlay when clicked start game
@@ -41,6 +38,9 @@ btnReset.addEventListener('click', (e) => {
 //Get random phrase from array phrases and split characters into array
 function getRandomPhraseAsArray(arr){
   let randomItem = arr[Math.floor(Math.random()*arr.length)];
+  //put random phrase in variable for use on win/lose screens
+  thePhrase = randomItem;
+  //return phrase split in array
   return randomItem.split('');
 }
 
@@ -55,7 +55,7 @@ function addPhraseToDisplay(arr){
       li.classList.add("letter");
     }
     li.textContent = phraseArray[i];
-    ul.appendChild(li);
+    phraseUl.appendChild(li);
   }
 }
 
@@ -83,15 +83,51 @@ qwerty.addEventListener('click', (e) => {
     button.setAttribute('disabled','true');
     button = button.textContent.toLowerCase();
     letterFound = checkLetter(button);
+
+    //alert(letterFound);
     if(letterFound == null){
-      missed++;
-      if(missed >= 5){
-        youLose();
-      }
+      //add one to the missed variable
+        missed++;
+        //need to remove a try here. Get the last child tries of scoreBoardOl and remove it
+         tries = scoreBoardOl.querySelector('.tries:last-child');
+         tries.parentNode.removeChild(tries);
     }
+
+    checkWin();
+
   }
 })
 
-function youLose(){
-  overlay.style.display = "flex";
+
+
+//Create a checkWin function
+
+function checkWin(){
+  //get count of letters with class 'show'
+  let letterShow = phraseUl.querySelectorAll('.show');
+  let showCount = letterShow.length;
+
+  //get count of letters with class 'letters'
+  let letterLetter = phraseUl.querySelectorAll('.letter');
+  let letterCount = letterLetter.length;
+
+  //alert(letterCount);
+
+  if(showCount === letterCount){
+    overlay.classList.add("win");
+    overlay.style.display = "flex";
+    overlayTitle.innerHTML = `You Win!<br> The phrase was:<br>${thePhrase}`;
+  }
+
+  if(missed >= 5){
+    overlay.classList.add("lose");
+    overlay.style.display = "flex";
+    overlayTitle.innerHTML = `You Lose!<br> The phrase was:<br>${thePhrase}`;
+  }
+  //If they’re equal, show the overlay screen with the “win” class and appropriate text. Otherwise, if the number of misses is equal to or greater than 5, show the overlay screen with the “lose” class and appropriate text.
+}
+
+
+function resetGame(){
+
 }
