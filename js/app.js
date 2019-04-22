@@ -25,6 +25,7 @@ const getRandomPhraseAsArray = arr => {
   let randomItem = arr[Math.floor(Math.random() * arr.length)];
   // **optional** I put my random phrase in variable for use on the win/lose screens
   thePhrase = randomItem;
+
   return randomItem.split(''); //return phrase split in array
 }
 
@@ -90,7 +91,7 @@ const checkWin = () => {
 }
 
 const resetGame = () => {
-  btnReset.textContent = 'Play Again'; //change button name to play again
+  btnReset.textContent = 'Play Again'; //set missed variable back to 0
   missed = 0; //set missed variable back to 0
 
   phraseUl.querySelectorAll('li').forEach(el =>
@@ -108,8 +109,9 @@ const resetGame = () => {
   }
 
   for (let i = 0; i < tries.length; i++) { //reset tries, put the hearts back
-    tries[i].style.display = 'inline-block';
+    tries[i].getElementsByTagName("IMG")[0].src = 'images/liveHeart.png';
   }
+
 }
 
 qwerty.addEventListener('click', e => {
@@ -122,7 +124,10 @@ qwerty.addEventListener('click', e => {
 
     if (letterFound == null) {
       //need to remove a try here. Use the value of missed as an index for each heart
-      tries[missed].style.display = 'none';
+      //tries[missed].style.display = 'none';
+
+      tries[missed].getElementsByTagName("IMG")[0].src = 'images/lostHeart.png';
+
       missed++;   //add one to the missed variable
     }
 
