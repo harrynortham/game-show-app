@@ -9,9 +9,6 @@ const triesTotal = 5;
 const btnReset = overlay.querySelector('.btn__reset');
 const phraseUl = phrase.getElementsByTagName("UL")[0];
 const phrases = [
-  'As bald as a coot',
-  'As mad as a hatter',
-  'Blaze a trail',
   'Cool as a cucumber',
   'Eat humble pie',
   'Head over heels',
